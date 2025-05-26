@@ -427,7 +427,7 @@ function generateS3Url(key: string): string {
   // 如果设置了自定义域名，直接使用自定义域名
   if (env.S3_CUSTOM_DOMAIN) {
     const customDomain = env.S3_CUSTOM_DOMAIN.replace(/\/$/, '') // 移除末尾的斜杠
-    return `${customDomain}/${bucketName}/${key}`
+    return `${customDomain}/${key}`
   }
 
   // 如果使用自定义端点，构建相应的 URL
