@@ -584,94 +584,6 @@
     }
   },
   {
-    "id": "DSCF3136",
-    "title": "DSCF3136",
-    "description": "",
-    "dateTaken": "2025-05-24T15:02:17.000Z",
-    "views": 0,
-    "tags": [],
-    "originalUrl": "https://s3-private.innei.in/images/DSCF3136.jpg",
-    "thumbnailUrl": "/thumbnails/DSCF3136.webp",
-    "blurhash": "UhCab;tRIURi.AxuRiRP%hofWAWB%hV@V[kC",
-    "width": 7728,
-    "height": 5152,
-    "aspectRatio": 1.5,
-    "s3Key": "DSCF3136.jpg",
-    "lastModified": "2025-05-24T16:56:37.901Z",
-    "size": 34346465,
-    "exif": {
-      "bigEndian": false,
-      "Image": {
-        "Make": "FUJIFILM",
-        "Model": "X-T5",
-        "XResolution": 300,
-        "YResolution": 300,
-        "ResolutionUnit": 2,
-        "Software": "Capture One Macintosh",
-        "ExifTag": 424
-      },
-      "Thumbnail": {
-        "Compression": 6,
-        "JPEGInterchangeFormat": 1158,
-        "JPEGInterchangeFormatLength": 3081
-      },
-      "Photo": {
-        "ExposureTime": 0.00025,
-        "FNumber": 1.8,
-        "ExposureProgram": 1,
-        "ISOSpeedRatings": 400,
-        "SensitivityType": 1,
-        "ExifVersion": {
-          "0": 48,
-          "1": 50,
-          "2": 51,
-          "3": 48
-        },
-        "DateTimeOriginal": "2025-05-24T15:02:17.000Z",
-        "DateTimeDigitized": "2025-05-24T15:02:17.000Z",
-        "OffsetTimeOriginal": "+08:00",
-        "ShutterSpeedValue": 11.965784,
-        "ApertureValue": 1.695994,
-        "BrightnessValue": 8.24,
-        "ExposureBiasValue": 0,
-        "MaxApertureValue": 1,
-        "MeteringMode": 2,
-        "LightSource": 0,
-        "Flash": 0,
-        "FocalLength": 50,
-        "PixelXDimension": 7728,
-        "PixelYDimension": 5152,
-        "FocalPlaneXResolution": 1879,
-        "FocalPlaneYResolution": 1879,
-        "FocalPlaneResolutionUnit": 3,
-        "SensingMethod": 2,
-        "FileSource": {
-          "0": 3
-        },
-        "SceneType": {
-          "0": 1
-        },
-        "CustomRendered": 0,
-        "ExposureMode": 1,
-        "WhiteBalance": 1,
-        "FocalLengthIn35mmFilm": 75,
-        "SceneCaptureType": 0,
-        "Sharpness": 0,
-        "SubjectDistanceRange": 0,
-        "BodySerialNumber": "5AA05818",
-        "LensSpecification": [
-          50,
-          50,
-          1.4142135642135643,
-          1.4142135642135643
-        ],
-        "LensMake": "BS-Optics",
-        "LensModel": "BS-Optics FX 50mm F1.4",
-        "LensSerialNumber": "30400849"
-      }
-    }
-  },
-  {
     "id": "DSCF3119",
     "title": "DSCF3119",
     "description": "",
@@ -3093,6 +3005,228 @@
         "GPSSpeed": 0,
         "GPSMapDatum": "WGS-84",
         "GPSDateStamp": "2025:04:21"
+      }
+    }
+  },
+  {
+    "id": "IMG_5470",
+    "title": "IMG 5470",
+    "description": "",
+    "dateTaken": "2024-01-12T08:27:53.000Z",
+    "views": 0,
+    "tags": [],
+    "originalUrl": "https://s3-private.innei.in/images/IMG_5470.HEIC",
+    "thumbnailUrl": "/thumbnails/IMG_5470.webp",
+    "blurhash": "UpF6X_ayadogyZoej?fk9bkCkDjZsRR-WXj[",
+    "width": 4032,
+    "height": 3024,
+    "aspectRatio": 1.3333333333333333,
+    "s3Key": "IMG_5470.HEIC",
+    "lastModified": "2025-05-26T10:53:19.335Z",
+    "size": 1139263,
+    "exif": {
+      "bigEndian": true,
+      "Image": {
+        "Make": "Apple",
+        "Model": "iPhone 15",
+        "Orientation": 1,
+        "XResolution": 72,
+        "YResolution": 72,
+        "ResolutionUnit": 2,
+        "Software": "17.2.1",
+        "DateTime": "2024-01-12T08:27:53.000Z",
+        "HostComputer": "iPhone 15",
+        "ExifTag": 216,
+        "GPSTag": 2432
+      },
+      "Photo": {
+        "ExposureTime": 0.0013386880856760374,
+        "FNumber": 1.6,
+        "ExposureProgram": 2,
+        "ISOSpeedRatings": 32,
+        "ExifVersion": {
+          "0": 48,
+          "1": 50,
+          "2": 51,
+          "3": 50
+        },
+        "DateTimeOriginal": "2024-01-12T08:27:53.000Z",
+        "DateTimeDigitized": "2024-01-12T08:27:53.000Z",
+        "OffsetTime": "+08:00",
+        "OffsetTimeOriginal": "+08:00",
+        "OffsetTimeDigitized": "+08:00",
+        "ShutterSpeedValue": 9.54570616397367,
+        "ApertureValue": 1.3561438092556088,
+        "BrightnessValue": 8.22166953061409,
+        "ExposureBiasValue": 0,
+        "MeteringMode": 5,
+        "Flash": 16,
+        "FocalLength": 5.96,
+        "SubjectArea": [
+          2007,
+          1507,
+          1157,
+          662
+        ],
+        "SubSecTimeOriginal": "572",
+        "SubSecTimeDigitized": "572",
+        "ColorSpace": 65535,
+        "PixelXDimension": 4032,
+        "PixelYDimension": 3024,
+        "SensingMethod": 2,
+        "SceneType": {
+          "0": 1
+        },
+        "ExposureMode": 0,
+        "WhiteBalance": 0,
+        "FocalLengthIn35mmFilm": 52,
+        "LensSpecification": [
+          1.5399999618512084,
+          5.96,
+          1.6,
+          2.4
+        ],
+        "LensMake": "Apple",
+        "LensModel": "iPhone 15 back dual wide camera 5.96mm f/1.6",
+        "CompositeImage": 2
+      },
+      "GPSInfo": {
+        "GPSLatitudeRef": "N",
+        "GPSLatitude": [
+          27,
+          6,
+          5.14
+        ],
+        "GPSLongitudeRef": "E",
+        "GPSLongitude": [
+          100,
+          15,
+          26.67
+        ],
+        "GPSAltitudeRef": 0,
+        "GPSAltitude": 3051.514003294893,
+        "GPSTimeStamp": [
+          0,
+          27,
+          53
+        ],
+        "GPSSpeedRef": "K",
+        "GPSSpeed": 0,
+        "GPSImgDirectionRef": "M",
+        "GPSImgDirection": 289.05589307411907,
+        "GPSDestBearingRef": "M",
+        "GPSDestBearing": 289.05589307411907,
+        "GPSDateStamp": "2024:01:12",
+        "GPSHPositioningError": 3.5355339055557087
+      }
+    }
+  },
+  {
+    "id": "IMG_3564",
+    "title": "IMG 3564",
+    "description": "",
+    "dateTaken": "2022-09-08T10:14:42.000Z",
+    "views": 0,
+    "tags": [],
+    "originalUrl": "https://s3-private.innei.in/images/IMG_3564.jpg",
+    "thumbnailUrl": "/thumbnails/IMG_3564.webp",
+    "blurhash": "UhHL_EofS*t7T#kCafofV@aynhaxxujsWXa}",
+    "width": 2360,
+    "height": 2417,
+    "aspectRatio": 0.9764170459247,
+    "s3Key": "IMG_3564.jpg",
+    "lastModified": "2025-05-26T10:58:54.105Z",
+    "size": 3571342,
+    "exif": {
+      "bigEndian": false,
+      "Image": {
+        "Make": "Apple",
+        "Model": "iPhone 12",
+        "XResolution": 300,
+        "YResolution": 300,
+        "ResolutionUnit": 2,
+        "Software": "Capture One Macintosh",
+        "ExifTag": 170,
+        "GPSTag": 752
+      },
+      "Thumbnail": {
+        "Compression": 6,
+        "JPEGInterchangeFormat": 1052,
+        "JPEGInterchangeFormatLength": 2828
+      },
+      "Photo": {
+        "ExposureTime": 0.0001539882968894364,
+        "FNumber": 1.6,
+        "ExposureProgram": 2,
+        "ISOSpeedRatings": 32,
+        "ExifVersion": {
+          "0": 48,
+          "1": 50,
+          "2": 51,
+          "3": 48
+        },
+        "DateTimeOriginal": "2022-09-08T10:14:42.000Z",
+        "DateTimeDigitized": "2022-09-08T10:14:42.000Z",
+        "OffsetTimeOriginal": "+08:00",
+        "ShutterSpeedValue": 12.664892,
+        "ApertureValue": 1.356144,
+        "BrightnessValue": 10.854364227867377,
+        "ExposureBiasValue": 0,
+        "MeteringMode": 5,
+        "Flash": 16,
+        "FocalLength": 4.2,
+        "SubjectArea": [
+          2007,
+          1505,
+          2320,
+          1390
+        ],
+        "SubSecTimeOriginal": "582",
+        "SubSecTimeDigitized": "582",
+        "PixelXDimension": 2360,
+        "PixelYDimension": 2417,
+        "SensingMethod": 2,
+        "FileSource": {
+          "0": 3
+        },
+        "SceneType": {
+          "0": 1
+        },
+        "ExposureMode": 0,
+        "WhiteBalance": 0,
+        "DigitalZoomRatio": 1.3428063943161634,
+        "FocalLengthIn35mmFilm": 35,
+        "LensSpecification": [
+          1.5499999523160568,
+          4.2,
+          1.6,
+          2.4
+        ],
+        "LensMake": "Apple",
+        "LensModel": "iPhone 12 back dual wide camera 4.2mm f/1.6"
+      },
+      "GPSInfo": {
+        "GPSLatitudeRef": "N",
+        "GPSLatitude": [
+          31,
+          8.704,
+          0
+        ],
+        "GPSLongitudeRef": "E",
+        "GPSLongitude": [
+          121,
+          39.3631667,
+          0
+        ],
+        "GPSAltitudeRef": 0,
+        "GPSAltitude": 6.529628762150135,
+        "GPSSpeedRef": "K",
+        "GPSSpeed": 0,
+        "GPSImgDirectionRef": "M",
+        "GPSImgDirection": 331.1650998824912,
+        "GPSDestBearingRef": "M",
+        "GPSDestBearing": 331.1650998824912,
+        "GPSHPositioningError": 3.5355339046563916
       }
     }
   }
