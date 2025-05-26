@@ -1,6 +1,6 @@
 export const siteConfig = {
-  name: "Innei's Photo Gallery",
-  title: "Innei's Photo Gallery",
+  name: "Super's Photo Gallery",
+  title: "Super's Photo Gallery",
   description:
     'Capturing beautiful moments in life, documenting daily warmth and emotions through my lens.',
   url: process.env.SITE_URL || 'https://gallery.innei.in',
