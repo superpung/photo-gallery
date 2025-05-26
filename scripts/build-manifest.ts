@@ -271,7 +271,6 @@ async function getImageMetadata(
 ): Promise<ImageMetadata | null> {
   try {
     const metadata = await sharp(imageBuffer).metadata()
-    console.info(metadata)
 
     if (!metadata.width || !metadata.height || !metadata.format) {
       console.error('图片元数据不完整')
@@ -299,7 +298,21 @@ function cleanExifData(exifData: any): any {
     return exifData.map((item) => cleanExifData(item))
   }
 
+  // 如果是 Date 对象，直接返回
+  if (exifData instanceof Date) {
+    return exifData
+  }
+
   const cleaned: any = {}
+
+  // 重要的日期字段，不应该被过度清理
+  const importantDateFields = new Set([
+    'DateTimeOriginal',
+    'DateTime',
+    'DateTimeDigitized',
+    'CreateDate',
+    'ModifyDate',
+  ])
 
   for (const [key, value] of Object.entries(exifData)) {
     if (value === null || value === undefined) {
@@ -307,11 +320,22 @@ function cleanExifData(exifData: any): any {
     }
 
     if (typeof value === 'string') {
-      // 移除字符串中的所有空字符并清理空白字符
-      const cleanedString = value.replaceAll('\0', '').trim()
-      if (cleanedString.length > 0) {
-        cleaned[key] = cleanedString
+      // 对于重要的日期字段，只移除空字符，不进行过度清理
+      if (importantDateFields.has(key)) {
+        const cleanedString = value.replaceAll('\0', '')
+        if (cleanedString.length > 0) {
+          cleaned[key] = cleanedString
+        }
+      } else {
+        // 对于其他字符串字段，移除空字符并清理空白字符
+        const cleanedString = value.replaceAll('\0', '').trim()
+        if (cleanedString.length > 0) {
+          cleaned[key] = cleanedString
+        }
       }
+    } else if (value instanceof Date) {
+      // Date 对象直接保留
+      cleaned[key] = value
     } else if (typeof value === 'object') {
       // 递归清理嵌套对象
       const cleanedNested = cleanExifData(value)
@@ -352,6 +376,7 @@ async function extractExifData(
 
     // 使用 exif-reader 解析 EXIF 数据
     const exifData = exifReader(metadata.exif)
+
     if (exifData.Photo?.MakerNote) {
       const recipe = getRecipe(exifData.Photo.MakerNote)
 
@@ -378,7 +403,7 @@ async function extractExifData(
 }
 
 // 从文件名提取照片信息
-function extractPhotoInfo(key: string): PhotoInfo {
+function extractPhotoInfo(key: string, exifData?: Exif | null): PhotoInfo {
   const fileName = path.basename(key, path.extname(key))
 
   // 尝试从文件名解析信息，格式示例: "2024-01-15_城市夜景_1250views"
@@ -387,10 +412,40 @@ function extractPhotoInfo(key: string): PhotoInfo {
   let views = 0
   const tags: string[] = []
 
-  // 如果文件名包含日期
-  const dateMatch = fileName.match(/(\d{4}-\d{2}-\d{2})/)
-  if (dateMatch) {
-    dateTaken = new Date(dateMatch[1]).toISOString()
+  // 优先使用 EXIF 中的 DateTimeOriginal
+  if (exifData?.Photo?.DateTimeOriginal) {
+    try {
+      const dateTimeOriginal = exifData.Photo.DateTimeOriginal as any
+
+      // 如果是 Date 对象，直接使用
+      if (dateTimeOriginal instanceof Date) {
+        dateTaken = dateTimeOriginal.toISOString()
+      } else if (typeof dateTimeOriginal === 'string') {
+        // 如果是字符串，按原来的方式处理
+        // EXIF 日期格式通常是 "YYYY:MM:DD HH:MM:SS"
+        const formattedDateStr = dateTimeOriginal.replace(
+          /^(\d{4}):(\d{2}):(\d{2})/,
+          '$1-$2-$3',
+        )
+        dateTaken = new Date(formattedDateStr).toISOString()
+      } else {
+        console.warn(
+          `未知的 DateTimeOriginal 类型: ${typeof dateTimeOriginal}`,
+          dateTimeOriginal,
+        )
+      }
+    } catch (error) {
+      console.warn(
+        `解析 EXIF DateTimeOriginal 失败: ${exifData.Photo.DateTimeOriginal}`,
+        error,
+      )
+    }
+  } else {
+    // 如果 EXIF 中没有日期，尝试从文件名解析
+    const dateMatch = fileName.match(/(\d{4}-\d{2}-\d{2})/)
+    if (dateMatch) {
+      dateTaken = new Date(dateMatch[1]).toISOString()
+    }
   }
 
   // 如果文件名包含浏览次数
@@ -490,11 +545,18 @@ async function buildManifest(): Promise<void> {
     let newCount = 0
     let deletedCount = 0
 
-    for (const [index, obj] of imageObjects.entries()) {
+    // 并发处理函数
+    async function processPhoto(
+      obj: _Object,
+      index: number,
+    ): Promise<{
+      item: PhotoManifestItem | null
+      type: 'processed' | 'skipped' | 'new' | 'failed'
+    }> {
       const key = obj.Key
       if (!key) {
         console.warn(`跳过没有 Key 的对象`)
-        continue
+        return { item: null, type: 'failed' }
       }
 
       const photoId = path.basename(key, path.extname(key))
@@ -508,98 +570,158 @@ async function buildManifest(): Promise<void> {
         const hasThumbnail = await thumbnailExists(photoId)
         if (hasThumbnail) {
           console.info(`照片未更新且缩略图存在，跳过处理: ${key}`)
-          manifest.push(existingItem)
-          skippedCount++
-          continue
+          return { item: existingItem, type: 'skipped' }
         } else {
           console.info(`照片未更新但缩略图缺失，重新生成缩略图: ${key}`)
         }
       }
 
       // 需要处理的照片（新照片、更新的照片或缺失缩略图的照片）
-      if (!existingItem) {
-        newCount++
+      const isNewPhoto = !existingItem
+      if (isNewPhoto) {
         console.info(`新照片: ${key}`)
       } else {
         console.info(`更新照片: ${key}`)
       }
 
-      // 获取图片数据
-      const rawImageBuffer = await getImageFromS3(key)
-      if (!rawImageBuffer) continue
-
-      // 预处理图片（处理 HEIC/HEIF 格式）
-      let imageBuffer: Buffer
       try {
-        imageBuffer = await preprocessImageBuffer(rawImageBuffer, key)
+        // 获取图片数据
+        const rawImageBuffer = await getImageFromS3(key)
+        if (!rawImageBuffer) return { item: null, type: 'failed' }
+
+        // 预处理图片（处理 HEIC/HEIF 格式）
+        let imageBuffer: Buffer
+        try {
+          imageBuffer = await preprocessImageBuffer(rawImageBuffer, key)
+        } catch (error) {
+          console.error(`预处理图片失败 ${key}:`, error)
+          return { item: null, type: 'failed' }
+        }
+
+        // 获取图片元数据
+        const metadata = await getImageMetadata(imageBuffer)
+        if (!metadata) return { item: null, type: 'failed' }
+
+        // 如果是增量更新且已有 blurhash，可以复用
+        let blurhash: string | null = null
+        if (!isForceMode && existingItem?.blurhash) {
+          blurhash = existingItem.blurhash
+          console.info(`复用现有 blurhash: ${photoId}`)
+        } else {
+          blurhash = await generateBlurhash(imageBuffer)
+        }
+
+        // 如果是增量更新且已有 EXIF 数据，可以复用
+        let exifData: Exif | null = null
+        if (!isForceMode && existingItem?.exif) {
+          exifData = existingItem.exif
+          console.info(`复用现有 EXIF 数据: ${photoId}`)
+        } else {
+          // 传入原始 buffer 以便在转换后的图片缺少 EXIF 时回退
+          const ext = path.extname(key).toLowerCase()
+          const originalBuffer = HEIC_FORMATS.has(ext)
+            ? rawImageBuffer
+            : undefined
+          exifData = await extractExifData(imageBuffer, originalBuffer)
+        }
+
+        // 提取照片信息（在获取 EXIF 数据之后，以便使用 DateTimeOriginal）
+        const photoInfo = extractPhotoInfo(key, exifData)
+
+        // 生成缩略图（会自动检查是否需要重新生成）
+        const thumbnailUrl = await generateThumbnail(
+          imageBuffer,
+          photoId,
+          isForceMode,
+        )
+
+        const aspectRatio = metadata.width / metadata.height
+
+        const photoItem: PhotoManifestItem = {
+          id: photoId,
+          title: photoInfo.title,
+          description: photoInfo.description,
+          dateTaken: photoInfo.dateTaken,
+          views: photoInfo.views,
+          tags: photoInfo.tags,
+          originalUrl: generateS3Url(key),
+          thumbnailUrl,
+          blurhash,
+          width: metadata.width,
+          height: metadata.height,
+          aspectRatio,
+          s3Key: key,
+          lastModified:
+            obj.LastModified?.toISOString() || new Date().toISOString(),
+          size: obj.Size || 0,
+          exif: exifData,
+        }
+
+        return { item: photoItem, type: isNewPhoto ? 'new' : 'processed' }
       } catch (error) {
-        console.error(`预处理图片失败 ${key}:`, error)
-        continue
+        console.error(`处理照片失败 ${key}:`, error)
+        return { item: null, type: 'failed' }
       }
+    }
 
-      // 获取图片元数据
-      const metadata = await getImageMetadata(imageBuffer)
-      if (!metadata) continue
+    // 工作池模式并发处理照片，限制并发数为 5
+    const CONCURRENCY_LIMIT = 5
+    const results: {
+      item: PhotoManifestItem | null
+      type: 'processed' | 'skipped' | 'new' | 'failed'
+    }[] = Array.from({ length: imageObjects.length })
 
-      // 提取照片信息
-      const photoInfo = extractPhotoInfo(key)
+    console.info(`开始并发处理照片，工作池模式，并发数: ${CONCURRENCY_LIMIT}`)
 
-      // 如果是增量更新且已有 blurhash，可以复用
-      let blurhash: string | null = null
-      if (!isForceMode && existingItem?.blurhash) {
-        blurhash = existingItem.blurhash
-        console.info(`复用现有 blurhash: ${photoId}`)
-      } else {
-        blurhash = await generateBlurhash(imageBuffer)
+    // 创建任务队列
+    let taskIndex = 0
+    const totalTasks = imageObjects.length
+
+    // Worker 函数
+    async function worker(): Promise<void> {
+      while (taskIndex < totalTasks) {
+        const currentIndex = taskIndex++
+        if (currentIndex >= totalTasks) break
+
+        const obj = imageObjects[currentIndex]
+        console.info(
+          `Worker 开始处理照片 ${currentIndex + 1}/${totalTasks}: ${obj.Key}`,
+        )
+
+        const result = await processPhoto(obj, currentIndex)
+        results[currentIndex] = result
+
+        console.info(
+          `Worker 完成照片 ${currentIndex + 1}/${totalTasks}: ${obj.Key} (${result.type})`,
+        )
       }
+    }
 
-      // 如果是增量更新且已有 EXIF 数据，可以复用
-      let exifData: Exif | null = null
-      if (!isForceMode && existingItem?.exif) {
-        exifData = existingItem.exif
-        console.info(`复用现有 EXIF 数据: ${photoId}`)
-      } else {
-        // 传入原始 buffer 以便在转换后的图片缺少 EXIF 时回退
-        const ext = path.extname(key).toLowerCase()
-        const originalBuffer = HEIC_FORMATS.has(ext)
-          ? rawImageBuffer
-          : undefined
-        exifData = await extractExifData(imageBuffer, originalBuffer)
+    // 启动工作池
+    const workers = Array.from({ length: CONCURRENCY_LIMIT }, () => worker())
+    await Promise.all(workers)
+
+    // 统计结果并添加到 manifest
+    for (const result of results) {
+      if (result.item) {
+        manifest.push(result.item)
+
+        switch (result.type) {
+          case 'new': {
+            newCount++
+            processedCount++
+            break
+          }
+          case 'processed': {
+            processedCount++
+            break
+          }
+          case 'skipped': {
+            skippedCount++
+            break
+          }
+        }
       }
-
-      // 生成缩略图（会自动检查是否需要重新生成）
-      const thumbnailUrl = await generateThumbnail(
-        imageBuffer,
-        photoId,
-        isForceMode,
-      )
-
-      const aspectRatio = metadata.width / metadata.height
-
-      manifest.push({
-        id: photoId,
-        title: photoInfo.title,
-        description: photoInfo.description,
-        dateTaken: photoInfo.dateTaken,
-        views: photoInfo.views,
-        tags: photoInfo.tags,
-        originalUrl: generateS3Url(key),
-        thumbnailUrl,
-        blurhash,
-        width: metadata.width,
-        height: metadata.height,
-        aspectRatio,
-        s3Key: key,
-        lastModified:
-          obj.LastModified?.toISOString() || new Date().toISOString(),
-        size: obj.Size || 0,
-        exif: exifData,
-      })
-
-      processedCount++
-
-      // 添加延迟避免过快处理
-      await new Promise((resolve) => setTimeout(resolve, 100))
     }
 
     // 检测并处理已删除的图片
