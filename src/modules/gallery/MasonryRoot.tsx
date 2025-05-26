@@ -146,7 +146,7 @@ const MasonryHeaderMasonryItem = ({ width }: { width: number }) => {
                 <p className="text-sm text-text-secondary mt-1">
                   {data?.length || 0} photos
                 </p>
-                <p className="text-sm text-text-secondary">Innei's Gallery</p>
+                <p className="text-sm text-text-secondary">Super's Gallery</p>
               </div>
             </div>
 
